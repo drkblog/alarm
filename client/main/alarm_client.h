@@ -1,0 +1,1 @@
+bool poll_status(const char * ip);

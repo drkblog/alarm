@@ -1,0 +1,1 @@
+int resolve_mdns_host(const char * host_name, char ip[16]);
