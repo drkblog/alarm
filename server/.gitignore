@@ -32,4 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
+# Skip concrete configuration
 alarm-server-client-secret.json
+application-local.properties

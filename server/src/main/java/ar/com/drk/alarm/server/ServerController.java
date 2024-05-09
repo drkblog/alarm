@@ -13,8 +13,11 @@ public class ServerController {
 
   private final CalendarService calendarService;
 
-  @GetMapping("/status")
-  public String status() {
+  @GetMapping(
+      value = "/status",
+      produces = "application/json"
+  )
+  public Boolean status() {
     return calendarService.getEvents();
   }
 }
