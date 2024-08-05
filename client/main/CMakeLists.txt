@@ -10,6 +10,6 @@ else()
     set(tcp_client_ip tcp_client_v6.c)
 endif()
 
-idf_component_register(SRCS "tcp_client_v4.c" "main.c" "${tcp_client_ip}" "mdns_local.c" "wifi.c"
+idf_component_register(SRCS "main.c" "${tcp_client_ip}" "mdns_local.c" "wifi.c"
                                 INCLUDE_DIRS "."
                                 REQUIRES ${requires})

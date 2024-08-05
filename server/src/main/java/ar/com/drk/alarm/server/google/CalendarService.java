@@ -31,7 +31,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -47,7 +49,11 @@ public class CalendarService {
   private Credential credential;
   private File dataStore;
   private Calendar client;
-  private final TemporalAmount timeWindow = Duration.of(3, ChronoUnit.MINUTES);
+
+  // Alarm will go off if there is an event starting in the next 5 minutes
+  private final TemporalAmount timeWindow = Duration.of(5, ChronoUnit.MINUTES);
+
+  private Set<String> alreadySeenEvents = Set.of();
 
   @PostConstruct
   public void initialize() {
@@ -87,21 +93,28 @@ public class CalendarService {
           .setTimeMin(getRangeStart())
           .setTimeMax(getRangeEnd())
           .execute();
-      return events.getItems().stream()
+      final boolean triggerAlarm = events.getItems().stream()
+          .filter(this::isNew)
           .anyMatch(shouldTriggerAlarm());
+      alreadySeenEvents = getIds(events);
+      return triggerAlarm;
     } catch (final IOException e) {
       log.error("Error getting events", e);
       throw new UncheckedIOException(e);
     }
   }
 
-  private static Predicate<Event> shouldTriggerAlarm() {
-    return event -> event.getStart().getDateTime() != null && !event.getStart().getDateTime().isDateOnly();
+  private boolean isNew(final Event event) {
+    return !alreadySeenEvents.contains(event.getId());
   }
 
-  private boolean isWithinRange(final Event event) {
-    final long start = event.getEnd().getDateTime().getValue();
-    return start > getRangeStart().getValue() && event.getStart().getDateTime().getValue() < getRangeEnd().getValue();
+  private static Set<String> getIds(final Events events) {
+    return events.getItems().stream().map(Event::getId).collect(Collectors.toSet());
+  }
+
+  // Which kind of events we care about
+  private static Predicate<Event> shouldTriggerAlarm() {
+    return event -> event.getStart().getDateTime() != null && !event.getStart().getDateTime().isDateOnly();
   }
 
   private DateTime getRangeEnd() {

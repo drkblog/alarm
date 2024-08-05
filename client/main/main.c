@@ -3,6 +3,8 @@
  */
 #include <unistd.h>
 
+#include "driver/ledc.h"
+
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "esp_event.h"
@@ -14,13 +16,32 @@
 
 #include "config.h"
 
-#define THIRTHY_SECONDS 30
+#define PULSE_OFF 0
+static uint8_t s_alarm_state = 0;
+
+static void alarm_pulse(bool alarm_state)
+{
+    if (alarm_state) {
+        gpio_set_level(ALARM_OUTPUT_IO, s_alarm_state);
+    } else {
+        gpio_set_level(ALARM_OUTPUT_IO, PULSE_OFF);
+    }
+}
+
+static void configure_alarm(void)
+{
+    gpio_reset_pin(ALARM_OUTPUT_IO);
+    gpio_set_direction(ALARM_OUTPUT_IO, GPIO_MODE_OUTPUT);
+}
+
 
 void app_main(void)
 {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    configure_alarm();
 
     if (wifi_connect() != ESP_OK) {
         printf("Cannot start WiFi");
@@ -40,8 +61,19 @@ void app_main(void)
         return;
     }
 
+    u_int loop_count = 0;
+    bool status = false;
     while (1) {
-        bool status = poll_status(ip);
-        sleep(THIRTHY_SECONDS);
+        // Poll once every 2 seconds
+        if (loop_count % (POLL_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
+            status = poll_status(ip);
+        }
+        if (loop_count % (BLINK_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
+            alarm_pulse(status);
+        }
+        // Sleep 100ms (In theory, because the clock may be wrong)
+        vTaskDelay(LOOP_PERIOD_MS / portTICK_PERIOD_MS);
+
+        loop_count++;
     }
 }
