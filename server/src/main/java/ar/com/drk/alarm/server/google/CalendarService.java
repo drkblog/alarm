@@ -22,10 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -71,9 +70,10 @@ public class CalendarService {
 
   private Credential authorize() throws Exception {
     // load client secrets
+    final InputStream clientSecretResource = CalendarService.class.getResourceAsStream("/alarm-server-client-secret.json");
     final GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
         JSON_FACTORY,
-        new InputStreamReader(Files.newInputStream(Paths.get("alarm-server-client-secret.json")))
+        new InputStreamReader(clientSecretResource)
     );
     // set up authorization code flow
     final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
@@ -88,14 +88,17 @@ public class CalendarService {
 
   public Boolean getEvents() {
     try {
+      log.trace("Getting events...");
       final Events events = client.events()
           .list(configuration.getCalendarId())
           .setTimeMin(getRangeStart())
           .setTimeMax(getRangeEnd())
           .execute();
+      log.trace("Events received: {}", events);
       final boolean triggerAlarm = events.getItems().stream()
           .filter(this::isNew)
           .anyMatch(shouldTriggerAlarm());
+      log.trace("Trigger alarm: {}", triggerAlarm);
       alreadySeenEvents = getIds(events);
       return triggerAlarm;
     } catch (final IOException e) {

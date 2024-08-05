@@ -33,5 +33,4 @@ build/
 .vscode/
 
 # Skip concrete configuration
-alarm-server-client-secret.json
-application-local.properties
+src/main/resources/alarm-server-client-secret.json

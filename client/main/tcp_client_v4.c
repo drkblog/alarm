@@ -16,13 +16,10 @@
 #include "addr_from_stdin.h"
 #endif
 
-#define PORT CONFIG_EXAMPLE_PORT
-
 static const char *TAG = "ESP32C2";
 static const char *payload = "GET_STATUS";
 
-
-bool poll_status(const char * host_ip)
+bool poll_status(const char * host_ip, uint16_t port)
 {
     char rx_buffer[128];
     int addr_family = 0;
@@ -31,7 +28,7 @@ bool poll_status(const char * host_ip)
     struct sockaddr_in dest_addr;
     inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
     dest_addr.sin_family = AF_INET;
-    dest_addr.sin_port = htons(PORT);
+    dest_addr.sin_port = htons(port);
     addr_family = AF_INET;
     ip_protocol = IPPROTO_IP;
 
@@ -40,7 +37,7 @@ bool poll_status(const char * host_ip)
         ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
         return false;
     }
-    ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip, PORT);
+    ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip, port);
 
     int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if (err != 0) {

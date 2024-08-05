@@ -3,7 +3,7 @@
 
 
 int resolve_mdns_host(const char * host_name, char ip[16]) {
-    struct ip4_addr addr;
+    esp_ip4_addr_t addr;
     addr.addr = 0;
 
     esp_err_t err = mdns_query_a(host_name, 2000,  &addr);

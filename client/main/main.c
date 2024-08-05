@@ -61,12 +61,12 @@ void app_main(void)
         return;
     }
 
-    u_int loop_count = 0;
+    uint16_t loop_count = 0;
     bool status = false;
     while (1) {
         // Poll once every 2 seconds
         if (loop_count % (POLL_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
-            status = poll_status(ip);
+            status = poll_status(ip, SERVER_PORT);
         }
         if (loop_count % (BLINK_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
             alarm_pulse(status);

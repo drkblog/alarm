@@ -1,1 +1,1 @@
-bool poll_status(const char * ip);
+bool poll_status(const char * ip, uint16_t port);
