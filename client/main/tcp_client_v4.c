@@ -17,11 +17,11 @@
 #endif
 
 static const char *TAG = "ESP32C2";
-static const char *payload = "GET_STATUS";
+static const char *payload_template = "GET /calendar/status HTTP/1.1\r\nHost: %s:%u\r\nConnection: close\r\n\r\n";
 
 bool poll_status(const char * host_ip, uint16_t port)
 {
-    char rx_buffer[128];
+    char rx_buffer[256];
     int addr_family = 0;
     int ip_protocol = 0;
 
@@ -47,6 +47,8 @@ bool poll_status(const char * host_ip, uint16_t port)
     }
     ESP_LOGI(TAG, "Successfully connected");
 
+    char payload[256];
+    sprintf(payload, payload_template, host_ip, port);
     err = send(sock, payload, strlen(payload), 0);
     if (err < 0) {
         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
@@ -73,5 +75,5 @@ bool poll_status(const char * host_ip, uint16_t port)
     shutdown(sock, 0);
     close(sock);
 
-    return rx_buffer[0] == 'A';
+    return strcmp(rx_buffer, "200 OK") == 0;
 }
