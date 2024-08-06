@@ -16,12 +16,23 @@
 #include "addr_from_stdin.h"
 #endif
 
-static const char *TAG = "ESP32C2";
+static const char *TAG = "ESP32C2-TCP-CLIENT";
 static const char *payload_template = "GET /calendar/status HTTP/1.1\r\nHost: %s:%u\r\nConnection: close\r\n\r\n";
+
+#define RX_BUFFER_SIZE 256
+#define PAYLOAD_BUFFER_SIZE 256
+
+bool get_boolean_from(const char * str) {
+    char * message_start = strstr(str, "\r\n\r\n");
+    message_start = strstr(message_start + 4, "\r\n");
+    message_start += 2;
+    ESP_LOGI(TAG, "Boolean: %c", message_start[0]);
+    return message_start[0] == 't';
+}
 
 bool poll_status(const char * host_ip, uint16_t port)
 {
-    char rx_buffer[256];
+    char rx_buffer[RX_BUFFER_SIZE];
     int addr_family = 0;
     int ip_protocol = 0;
 
@@ -37,7 +48,7 @@ bool poll_status(const char * host_ip, uint16_t port)
         ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
         return false;
     }
-    ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip, port);
+    ESP_LOGD(TAG, "Socket created, connecting to %s:%d", host_ip, port);
 
     int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if (err != 0) {
@@ -47,8 +58,8 @@ bool poll_status(const char * host_ip, uint16_t port)
     }
     ESP_LOGI(TAG, "Successfully connected");
 
-    char payload[256];
-    sprintf(payload, payload_template, host_ip, port);
+    char payload[PAYLOAD_BUFFER_SIZE];
+    snprintf(payload, PAYLOAD_BUFFER_SIZE - 1, payload_template, host_ip, port);
     err = send(sock, payload, strlen(payload), 0);
     if (err < 0) {
         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
@@ -57,7 +68,7 @@ bool poll_status(const char * host_ip, uint16_t port)
         return false;
     }
 
-    int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
+    int len = recv(sock, rx_buffer, RX_BUFFER_SIZE - 1, 0);
     // Error occurred during receiving
     if (len < 0) {
         ESP_LOGE(TAG, "recv failed: errno %d", errno);
@@ -67,13 +78,14 @@ bool poll_status(const char * host_ip, uint16_t port)
     }
     else {
         rx_buffer[len] = 0; // Null-terminate whatever we received and treat like a string
-        ESP_LOGI(TAG, "Received %d bytes from %s:", len, host_ip);
-        ESP_LOGI(TAG, "%s", rx_buffer);
+        ESP_LOGD(TAG, "Received %d bytes from %s:", len, host_ip);
+        ESP_LOGV(TAG, "%s", rx_buffer);
     }
 
-    ESP_LOGE(TAG, "Shutting down socket...");
+    ESP_LOGI(TAG, "Shutting down socket...");
     shutdown(sock, 0);
     close(sock);
 
-    return strcmp(rx_buffer, "200 OK") == 0;
+    return get_boolean_from(rx_buffer);
 }
+

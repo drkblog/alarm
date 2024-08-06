@@ -13,10 +13,13 @@
 #include "mdns_local.h"
 #include "alarm_client.h"
 #include "wifi.h"
+#include "esp_log.h"
 
 #include "config.h"
 
 #define PULSE_OFF 0
+static const char *TAG = "ESP32C2-ALARM";
+
 static uint8_t s_alarm_state = 0;
 
 static void alarm_pulse(bool alarm_state)
@@ -37,6 +40,10 @@ static void configure_alarm(void)
 
 void app_main(void)
 {
+    esp_log_level_set("*", ESP_LOG_INFO);
+    esp_log_level_set(TAG, ESP_LOG_VERBOSE);
+    esp_log_level_set("ESP32C2-TCP-CLIENT", ESP_LOG_VERBOSE);
+
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -61,16 +68,20 @@ void app_main(void)
         return;
     }
 
-    uint16_t loop_count = 0;
+    uint8_t loop_count = 0;
     bool status = false;
     while (1) {
-        // Poll once every 2 seconds
         if (loop_count % (POLL_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
             status = poll_status(ip, SERVER_PORT);
+            ESP_LOGI(TAG, "Status: %s", status ? "true" : "false");
         }
         if (loop_count % (BLINK_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
-            alarm_pulse(status);
+            s_alarm_state = !s_alarm_state;
+            ESP_LOGI(TAG, "Blink: %s", s_alarm_state ? "true" : "false");
         }
+        
+        alarm_pulse(status);
+
         // Sleep 100ms (In theory, because the clock may be wrong)
         vTaskDelay(LOOP_PERIOD_MS / portTICK_PERIOD_MS);
 
