@@ -26,7 +26,7 @@ bool get_boolean_from(const char * str) {
     char * message_start = strstr(str, "\r\n\r\n");
     message_start = strstr(message_start + 4, "\r\n");
     message_start += 2;
-    ESP_LOGI(TAG, "Boolean: %c", message_start[0]);
+    ESP_LOGV(TAG, "Boolean: %c", message_start[0]);
     return message_start[0] == 't';
 }
 

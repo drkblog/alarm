@@ -35,6 +35,7 @@ static void configure_alarm(void)
 {
     gpio_reset_pin(ALARM_OUTPUT_IO);
     gpio_set_direction(ALARM_OUTPUT_IO, GPIO_MODE_OUTPUT);
+    gpio_set_level(ALARM_OUTPUT_IO, PULSE_OFF);
 }
 
 
@@ -51,20 +52,20 @@ void app_main(void)
     configure_alarm();
 
     if (wifi_connect() != ESP_OK) {
-        printf("Cannot start WiFi");
+        ESP_LOGE(TAG, "Cannot start WiFi");
         return;
     }
     ESP_ERROR_CHECK(esp_register_shutdown_handler(&wifi_shutdown));
 
     if (mdns_init() != ESP_OK) {
-        printf("Unable to initialize mDNS protocol");
+        ESP_LOGE(TAG, "Unable to initialize mDNS protocol");
         return;
     }
 
     char ip[16];
     int err;
     if ((err = resolve_mdns_host(SERVER_HOSTNAME, ip)) != 0) {
-        printf("Cannot find server host");
+        ESP_LOGE(TAG, "Cannot find server host");
         return;
     }
 
@@ -82,9 +83,7 @@ void app_main(void)
         
         alarm_pulse(status);
 
-        // Sleep 100ms (In theory, because the clock may be wrong)
         vTaskDelay(LOOP_PERIOD_MS / portTICK_PERIOD_MS);
-
         loop_count++;
     }
 }

@@ -6,3 +6,4 @@ managed_components
 local_config.h
 
 sdkconfig
+sdkconfig.old
