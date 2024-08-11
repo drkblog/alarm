@@ -7,3 +7,4 @@ local_config.h
 
 sdkconfig
 sdkconfig.old
+dependencies.lock
