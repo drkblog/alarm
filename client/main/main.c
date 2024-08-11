@@ -13,12 +13,12 @@
 #include "mdns_local.h"
 #include "alarm_client.h"
 #include "wifi.h"
-#include "esp_log.h"
+#include "log.h"
 
 #include "config.h"
 
 #define PULSE_OFF 0
-static const char *TAG = "ESP32C2-ALARM";
+static const char *TAG = TAG_ALARM;
 
 static uint8_t s_alarm_state = 0;
 
@@ -43,7 +43,7 @@ void app_main(void)
 {
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set(TAG, ESP_LOG_VERBOSE);
-    esp_log_level_set("ESP32C2-TCP-CLIENT", ESP_LOG_VERBOSE);
+    esp_log_level_set(TAG_TCP_CLIENT, ESP_LOG_VERBOSE);
 
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());

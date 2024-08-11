@@ -11,12 +11,12 @@
 #include <netdb.h>            // struct addrinfo
 #include <arpa/inet.h>
 #include "esp_netif.h"
-#include "esp_log.h"
+#include "log.h"
 #if defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
 #include "addr_from_stdin.h"
 #endif
 
-static const char *TAG = "ESP32C2-TCP-CLIENT";
+static const char *TAG = TAG_TCP_CLIENT;
 static const char *payload_template = "GET /calendar/status HTTP/1.1\r\nHost: %s:%u\r\nConnection: close\r\n\r\n";
 
 #define RX_BUFFER_SIZE 256
