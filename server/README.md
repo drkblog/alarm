@@ -4,10 +4,12 @@ This server connects to a Google Calendar account and return calendar status bas
 
 ## Configuration
 
-Create an application.properties file in the application directory with the following properties:
+Create an `application.properties` file in the application directory to provide your **Google calendar ID**.
+Optionally, you can also provide a time window for the alarm to check for events. The default is set to 5 minutes:
 
 ```properties
-server.calendar-id=your-google-email
+alarm.calendar-id=your-google-email
+alarm.time-window=PT3M
 ```
 
 When run for the first time or after removing `StoredCredentials` from the user's home `.alarm-server/store/` directory, the server will ask for the user's consent to access the Google Calendar account.
