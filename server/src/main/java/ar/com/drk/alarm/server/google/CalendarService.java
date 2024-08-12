@@ -38,8 +38,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
+  private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final String APPLICATION_NAME = "AlarmServerClient";
-  public static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+  private static final String CREDENTIALS_DIRECTORY = ".alarm-server/store";
 
   private final ServerConfiguration configuration;
 
@@ -57,7 +58,7 @@ public class CalendarService {
   @PostConstruct
   public void initialize() {
     try {
-      dataStore = new File(System.getProperty("user.home"), ".alarm-server/store");
+      dataStore = new File(System.getProperty("user.home"), CREDENTIALS_DIRECTORY);
       httpTransport = GoogleNetHttpTransport.newTrustedTransport();
       dataStoreFactory = new FileDataStoreFactory(dataStore);
       credential = authorize();
@@ -69,20 +70,20 @@ public class CalendarService {
   }
 
   private Credential authorize() throws Exception {
-    // load client secrets
     final InputStream clientSecretResource = CalendarService.class.getResourceAsStream("/alarm-server-client-secret.json");
+    if (clientSecretResource == null) {
+      throw new IllegalStateException("Client secret not found");
+    }
     final GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
         JSON_FACTORY,
         new InputStreamReader(clientSecretResource)
     );
-    // set up authorization code flow
     final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
         httpTransport,
         JSON_FACTORY,
         clientSecrets,
         Collections.singleton(CalendarScopes.CALENDAR)
     ).setDataStoreFactory(dataStoreFactory).build();
-    // authorize
     return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
   }
 

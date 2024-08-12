@@ -17,3 +17,8 @@ When run for the first time or after removing `StoredCredentials` from the user'
 - Use Java 17 or later.
 - User the **Maven** wrapper to build the project.
 - Use the `local` Spring profile and setup your test account in the `application-local.properties` file.
+
+### Pending work
+
+- Remove event window logic from `CalendarService` into a different class.
+- Make the event window configurable.
