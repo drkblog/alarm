@@ -1,27 +1,27 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-S2 | ESP32-S3 | Linux |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | ----- |
-
-
 # Alarm ESP32 client
 
 Client software for polling the Calendar server
 
+## Tooling
+
+1. Visual Studio Code
+2. PlatformIO plugin
+3. ESP-IDF plugin 5.2.x
+
 ## Configure the project
-This example can be configured to run on ESP32 and Linux target to communicate over IPv4 and IPv6.
+
+Create a file name `local_config.h` in the `main` directory with the following settings:
 
 ```
-idf.py menuconfig
+#define CONFIG_WIFI_SSID "desired-ssid"
+#define CONFIG_WIFI_PASSWORD "password"
+#define SERVER_HOSTNAME "hostname"
 ```
 
-Set following parameters under ```Example Configuration``` Options:
+Replacing the values with the wireless network **SSID** and password and the hostname of the computer running the server.
+The **hostname** must be resolvable through [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS)
 
-* Set `IP version` of example to be IPV4 or IPV6.
+## Build
 
-* Set `IPV4 Address` in case your chose IP version IPV4 above.
+Build using the ESD-IDF tool
 
-* Set `IPV6 Address` in case your chose IP version IPV6 above.
-    * For IPv6 there's an additional option for ```Interface selection```.
-    * Enter the name of the interface to explicitely establish communication over a specific interface.
-    * On selecting ```Auto``` the example will find the first interface with an IPv6 address and use it.
-
-* Set `Port` number that represents remote port the example will connect to.
