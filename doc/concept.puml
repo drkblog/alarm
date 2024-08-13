@@ -1,0 +1,16 @@
+@startuml concept
+cloud Network as "Network"
+node Server as "Alarm server"
+node Client as "Alarm client"
+cloud Internet
+node Google as "Google calendar API"
+
+Client --> Network : Request status
+Network --> Server
+Server --> Internet
+Internet --> Google
+Google ..> Internet
+Internet ..> Server
+Server ..> Network
+Network ..> Client : Response
+@enduml

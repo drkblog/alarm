@@ -1,13 +1,25 @@
 # Google Calendar alarm
 
-Personal project to build a physical alarm for Google Calendar.
+A physical alarm for Google Calendar.
 
 ## Background
 
-Sometime it's handy to be alerted of incoming meetings.
+Sometimes it's handy to be alerted of incoming meetings in **Calendar**.
 Specially if for any reason you cannot hear the notification sound from your computer.
-In this case an external device that you can sit on your desktop and produces some sort of alarm can be a solution.
-For this reason I built a small device based on a `XH-C2X` module powered by a `ESP32C2`/`ESP8684H4` 2.4GHz WiFi/BLE module.
+In such situations an external device that you can sit on your desktop and produces some sort of alarm can be a good solution.
+For this reason I've built a small device based on a `XH-C2X` module powered by a `ESP32C2`/`ESP8684H4` 2.4GHz WiFi/BLE module.
+
+This is a personal proyect and I've done my best to document everything.
+If you try to build this project yourself you may find out there are documentation gaps.
+Please feel free to create a ticket and I'll respond whenever possible.
+
+## Concept
+
+![concept](doc/concept.png)
+
+The `client` periodically requests for the calendar status to the `server`. Which makes a request to **Google Calendar API** for the events in the next five minutes (or a different configured time window). If there are events in such timeframe the `server` returns **true** to the `client` and the alarm goes off for the configured time.
+
+Subsequent requests won't return true unless **new events** appear in the time window. Those events for which an alarm was triggered won't make the alarm go off again.
 
 ## Server
 
