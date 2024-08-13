@@ -9,7 +9,7 @@ Specially if for any reason you cannot hear the notification sound from your com
 In such situations an external device that you can sit on your desktop and produces some sort of alarm can be a good solution.
 For this reason I've built a small device based on a `XH-C2X` module powered by a `ESP32C2`/`ESP8684H4` 2.4GHz WiFi/BLE module.
 
-This is a personal proyect and I've done my best to document everything.
+This is a personal project and I've done my best to document everything.
 If you try to build this project yourself you may find out there are documentation gaps.
 Please feel free to create a ticket and I'll respond whenever possible.
 
