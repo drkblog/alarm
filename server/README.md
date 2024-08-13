@@ -4,6 +4,10 @@ This server connects to a Google Calendar account and return calendar status bas
 
 ## Configuration
 
+You need to provide a Google API client secret with permissions to use the Calendar API.
+Create an API client in [Google Could Console](https://console.cloud.google.com/) and download the `credentials.json` file to the application `main/resources` directory.
+Rename the file to `alarm-server-client-secret.json`.
+
 Create an `application.properties` file in the application directory to provide your **Google calendar ID**.
 Optionally, you can also provide a time window for the alarm to check for events. The default is set to 5 minutes:
 

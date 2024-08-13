@@ -11,10 +11,12 @@ For this reason I built a small device based on a `XH-C2X` module powered by a `
 
 ## Server
 
-It's a Spring boot application acting as a RESTful server exposing an endpoint.
+It's a Spring boot application acting as a RESTful server exposing one endpoint.
 The client can query the endpoint in order to know if the alarm should be enabled.
 Once the server returns a `true` for a calendar event it won't take the event into account in the following requests.
 The events for which a `true` is returned depend on the server logic.
+
+> You need to create a **Google API client** with **Google Calendar** access and provide the secret file to the server [as documented here](server/README.md).
 
 ## Client
 
