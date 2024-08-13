@@ -23,7 +23,7 @@ Subsequent requests won't return true unless **new events** appear in the time w
 
 ## Server
 
-It's a Spring boot application acting as a RESTful server exposing one endpoint.
+It's a **Java Spring boot** application acting as a *RESTful* server exposing one endpoint.
 The client can query the endpoint in order to know if the alarm should be enabled.
 Once the server returns a `true` for a calendar event it won't take the event into account in the following requests.
 The events for which a `true` is returned depend on the server logic.
@@ -32,10 +32,10 @@ The events for which a `true` is returned depend on the server logic.
 
 ## Client
 
-It's a C application built using ESP-IDF framework.
-It's configured during the build with a server hostname and a WiFi network and password.
-On start the client connects to the network, resolves the hostname using **mDNS** and starts polling the server.
-If the server returns 'true' the client activates the alarm for some (configurable) time.
+It's a C application built using **ESP-IDF framework**.
+It's configured during the build with a server hostname and a _WiFi_ network and password.
+On start up the client connects to the network, resolves the hostname using **mDNS** and starts polling the server.
+If the server returns `true` the client activates the alarm for some (configurable) time.
 
 ## Hardware
 
@@ -46,3 +46,7 @@ The schematic [can be viewed here](hardware/schematic.png). It consists of the f
 - A transistor, LED and a couple of resistors to activate the vibration motor
 
 No PCB has been designed, instead components were mounted into a perfboard and connected with enameled wire. 
+
+## Acknowledgment
+
+Thank you [Gzalo](https://github.com/gzalo) for all the help with the hardware (designing, buying, soldering).
