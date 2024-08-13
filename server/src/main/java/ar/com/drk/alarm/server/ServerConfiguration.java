@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.Duration;
 import java.time.temporal.TemporalAmount;
 
 @Getter
@@ -15,5 +16,5 @@ import java.time.temporal.TemporalAmount;
 public final class ServerConfiguration {
   @NotEmpty
   private final String calendarId;
-  private final TemporalAmount timeWindow;
+  private final Duration timeWindow;
 }
