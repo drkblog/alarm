@@ -25,7 +25,7 @@ void setup_client(const char * host_ip, uint16_t port) {
   snprintf(payload, PAYLOAD_BUFFER_SIZE - 1, payload_template, host_ip, port);
 }
 
-bool get_boolean_from(const char * str) {
+static bool get_boolean_from(const char * str) {
     char * message_start = strstr(str, "\r\n\r\n");
     message_start = strstr(message_start + 4, "\r\n");
     message_start += 2;

@@ -31,7 +31,7 @@ static void alarm_pulse(bool alarm_state)
     }
 }
 
-static void configure_alarm(void)
+static void configure_alarm_hardware(void)
 {
     gpio_reset_pin(ALARM_OUTPUT_IO);
     gpio_set_direction(ALARM_OUTPUT_IO, GPIO_MODE_OUTPUT);
@@ -42,14 +42,14 @@ static void configure_alarm(void)
 void app_main(void)
 {
     esp_log_level_set("*", ESP_LOG_INFO);
-    esp_log_level_set(TAG, ESP_LOG_VERBOSE);
-    esp_log_level_set(TAG_TCP_CLIENT, ESP_LOG_VERBOSE);
+    esp_log_level_set(TAG, ESP_LOG_INFO);
+    esp_log_level_set(TAG_TCP_CLIENT, ESP_LOG_INFO);
 
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    configure_alarm();
+    configure_alarm_hardware();
 
     if (wifi_connect() != ESP_OK) {
         ESP_LOGE(TAG, "Cannot start WiFi");
@@ -76,11 +76,11 @@ void app_main(void)
     while (1) {
         if (loop_count % (POLL_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
             status = poll_status(ip, SERVER_PORT);
-            ESP_LOGI(TAG, "Status: %s", status ? "true" : "false");
+            ESP_LOGD(TAG, "Status: %s", status ? "true" : "false");
         }
         if (loop_count % (BLINK_PERIOD_MS / LOOP_PERIOD_MS) == 0) {
             s_alarm_state = !s_alarm_state;
-            ESP_LOGI(TAG, "Blink: %s", s_alarm_state ? "true" : "false");
+            ESP_LOGD(TAG, "Blink: %s", s_alarm_state ? "true" : "false");
         }
         
         alarm_pulse(status);
