@@ -12,15 +12,18 @@
 #include <arpa/inet.h>
 #include "esp_netif.h"
 #include "log.h"
-#if defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
-#include "addr_from_stdin.h"
-#endif
 
 static const char *TAG = TAG_TCP_CLIENT;
 static const char *payload_template = "GET /calendar/status HTTP/1.1\r\nHost: %s:%u\r\nConnection: close\r\n\r\n";
 
 #define RX_BUFFER_SIZE 256
 #define PAYLOAD_BUFFER_SIZE 256
+
+static char payload[PAYLOAD_BUFFER_SIZE];
+
+void setup_client(const char * host_ip, uint16_t port) {
+  snprintf(payload, PAYLOAD_BUFFER_SIZE - 1, payload_template, host_ip, port);
+}
 
 bool get_boolean_from(const char * str) {
     char * message_start = strstr(str, "\r\n\r\n");
@@ -58,8 +61,6 @@ bool poll_status(const char * host_ip, uint16_t port)
     }
     ESP_LOGI(TAG, "Successfully connected");
 
-    char payload[PAYLOAD_BUFFER_SIZE];
-    snprintf(payload, PAYLOAD_BUFFER_SIZE - 1, payload_template, host_ip, port);
     err = send(sock, payload, strlen(payload), 0);
     if (err < 0) {
         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);

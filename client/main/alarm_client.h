@@ -1,1 +1,2 @@
-bool poll_status(const char * ip, uint16_t port);
+void setup_client(const char * host_ip, uint16_t port);
+bool poll_status(const char * host_ip, uint16_t port);

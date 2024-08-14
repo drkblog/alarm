@@ -69,6 +69,8 @@ void app_main(void)
         return;
     }
 
+    setup_client(ip, SERVER_PORT);
+
     uint8_t loop_count = 0;
     bool status = false;
     while (1) {
