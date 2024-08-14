@@ -1,11 +1,17 @@
 @startuml concept
-cloud Network as "Network"
+cloud Network as "Local network"
 node Server as "Alarm server"
 node Client as "Alarm client"
+note left of Client
+  Running in the XH-C2X module
+end note
 cloud Internet
 node Google as "Google calendar API"
 
-Client --> Network : Request status
+Client --> Network : "Request"
+note right of Network
+ with Wireless
+end note
 Network --> Server
 Server --> Internet
 Internet --> Google

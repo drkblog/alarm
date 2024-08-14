@@ -6,7 +6,7 @@ Client software for polling the Calendar server
 
 1. Visual Studio Code
 2. PlatformIO plugin
-3. ESP-IDF plugin 5.2.x
+3. ESP-IDF plugin 5.2.x or 5.3.x
 
 ## Configure the project
 
